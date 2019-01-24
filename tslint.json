@@ -12,6 +12,7 @@
     "member-access": false,
     "variable-name": false,
     "no-trailing-whitespace": false,
+    "no-unused-expressions": true,
     "no-console": false,
     "quotemark": [true, "single"],
     "indent": [true, "spaces", 2],

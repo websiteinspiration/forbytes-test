@@ -13,12 +13,12 @@ describe('LiterableNumber.vue', () => {
     });
 
     describe('literateTillShousand mehtod', () => {
-        it('should return zero', () => {
-            expect(exampleComponent.literateTillShousand(0)).toBe('zero');
+        it('should return empty', () => {
+            expect(exampleComponent.literateTillShousand(0)).toBe('');
         });
 
         it('should return hunderds', () => {
-            expect(exampleComponent.literateTillShousand(500)).toBe('five hundred ');
+            expect(exampleComponent.literateTillShousand(500)).toBe('five hundred');
         });
 
         it('should return number less than hunderd', () => {
@@ -32,6 +32,14 @@ describe('LiterableNumber.vue', () => {
         it('should return number less than 20', () => {
             expect(exampleComponent.literateTillShousand(15)).toBe('fifteen');
         });
+
+        it('should return one hundred', () => {
+            expect(exampleComponent.literateTillShousand('100')).toBe('one hundred');
+        });
+
+        it('should return empty string', () => {
+            expect(exampleComponent.literateTillShousand('0')).toBe('');
+        });
     });
 
     describe('convert mehtod', () => {
@@ -42,6 +50,14 @@ describe('LiterableNumber.vue', () => {
 
         it('should return positive result', () => {
             expect(exampleComponent.convert('2')).toBe('two');
+        });
+
+        it('should return one hundred', () => {
+            expect(exampleComponent.convert('100')).toBe('one hundred');
+        });
+
+        it('should return one shousand', () => {
+            expect(exampleComponent.convert('1000')).toBe('one shousand');
         });
 
         it('uncorrect input', () => {

@@ -13,44 +13,11 @@
 
 <script lang="ts">
 const WOCABULARY = {
-  TILL10:  ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'],
+  TILL10:  ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'],
   TILL20: ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 
   'eightteen', 'nineteen'],
-  TILL100: ['zero', 'ten', 'twenty', 'thirty', 'fouty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'],
-  DEGRIES : [
-    {
-      name: 'septillion',
-      pow : 24,
-    },
-    {
-      name: 'sextillion',
-      pow : 21,
-    },
-    {
-      name: 'quintillion',
-      pow : 18,
-    },
-    {
-      name: 'quadrillion',
-      pow : 15,
-    },
-    {
-      name: 'trillion',
-      pow : 12,
-    },
-    {
-      name: 'billion',
-      pow : 9,
-    },
-    {
-      name: 'million',
-      pow : 6,
-    },
-    {
-      name: 'shousand',
-      pow : 3,
-    },
-  ],
+  TILL100: ['zero', '', 'twenty', 'thirty', 'fouty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'],
+  DEGRIES: ['', 'shousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion'],
 };
 import { Component, Vue } from 'vue-property-decorator';
 
@@ -66,60 +33,46 @@ export default class LiterableNumber extends Vue {
   }
 
   convert(num: number): string {
-    let result = '';
-    
+    const result = [];
+
     if (!num && num !== 0) {
       return 'Oops, please eneter correct number';
     }
-    if (num < 0) {
-      result = 'minus ';
-      num = Math.abs(num);
-    }
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < WOCABULARY.DEGRIES.length; i++) {
-      
-      const degree = Math.pow(10, WOCABULARY.DEGRIES[i].pow);
-      const degreeCount = this.literateTillShousand(Math.floor(num / degree));
-      
-      // if return not zero
-      if (degreeCount !== WOCABULARY.TILL10[0]) {
-        result += `${degreeCount} ${WOCABULARY.DEGRIES[i].name} `;
+
+    const minus = num < 0;
+    num = Math.abs(num);
+
+    let i = 0;
+    while ( (num > 0) && (i < WOCABULARY.DEGRIES.length) ) {
+      const degreeCount = this.literateTillShousand(num % 1000);
+
+      if (degreeCount) {
+        result.unshift(WOCABULARY.DEGRIES[i] ? `${degreeCount} ${WOCABULARY.DEGRIES[i]}` : degreeCount);
       }
-      num = num % degree;
+      num = Math.floor(num / 1000);
+      i++;
     }
-    result += this.literateTillShousand(num);
-    return result;
+    return `${minus ? 'minus ' : ''}${result.join(' ') || WOCABULARY.TILL100[0]}`;
   }
 
   literateTillShousand(number: number): any {
-      let result = '';
-      let oneDegree = Math.floor(number / 100);
-      if (oneDegree) {
-        result += `${WOCABULARY.TILL10[oneDegree]} hundred `;
-        number = number % 100;
+      const result = [];
+      const charts = number
+        .toString()
+        .split('')
+        .reverse()
+        .map((item) => parseInt(item, 10));
+
+      if (charts[2]) {
+        result.push(`${WOCABULARY.TILL10[charts[2]]} hundred`);
       }
-      if (number < 10) {
-        if (!result || number) {
-          result += WOCABULARY.TILL10[number];
-        }
-      } else if ( number < 20) {
-        number -= 10;
-        result += WOCABULARY.TILL20[number];
-      } else {
-        oneDegree = Math.floor(number / 10);
-        if (oneDegree) {
-          result += `${WOCABULARY.TILL100[oneDegree]} `;
-          number = number % 10;
-        }
-        if (number) {
-          result += WOCABULARY.TILL10[number];
-        }
+      if (charts[1]) {  
+        result.push(`${WOCABULARY.TILL100[charts[1]]}`);
       }
-      return result || WOCABULARY.TILL10[0];
+      charts[1] === 1 ? result.push(WOCABULARY.TILL20[charts[0]]) : result.push(WOCABULARY.TILL10[charts[0]]);
+      return result.filter((item) => !!item).join(' ');
   }
 }
-
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
